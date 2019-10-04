@@ -1,6 +1,6 @@
 /*	Author: nmoor004
  *  Partner(s) Name: none
- *	Lab Section:
+ *	Lab Section: 022
  *	Assignment: Lab # 2 Exercise # 1
  *	Exercise Description: [optional - include for your own benefit]
  *
