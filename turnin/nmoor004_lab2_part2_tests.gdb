@@ -1,61 +1,88 @@
-/*	Author: nmoor004
- *  Partner(s) Name: none
- *	Lab Section:
- *	Assignment: Lab # 2 Exercise # 1
- *	Exercise Description: [optional - include for your own benefit]
- *
- *	I acknowledge all content contained herein, excluding template or example
- *	code, is my own original work.
- */
-#include <avr/io.h>
-#ifdef _SIMULATE_
-#include "simAVRHeader.h"
-#endif
+# Test file for Lab2_introToAVR
 
 
-int main(void) {
-    /* Insert DDR and PORT initializations */
-	DDRA = 0x00; PORTA = 0xFF;  // Set PORTA as input pins.
-	DDRC = 0xFF; PORTC = 0x00; //Set PORTC as output pins.
-    /* Insert your solution below */
-	unsigned char temp_val = 0x00;    // Stores the value of PINA
-	//unsigned char check_val = 0x01;  // Value which is used to check the first bit
-	unsigned char cntavail = 0x04;  // How many spaces are available
-	int num_parked = 0;
+# commands.gdb provides the following functions for ease:
+#   test "<message>"
+#       Where <message> is the message to print. Must call this at the beginning of every test
+#       Example: test "PINA: 0x00 => expect PORTC: 0x01"
+#   checkResult
+#       Verify if the test passed or failed. Prints "passed." or "failed." accordingly, 
+#       Must call this at the end of every test.
+#   expectPORTx <val>
+#       With x as the port (A,B,C,D)
+#       The value the port is epected to have. If not it will print the erroneous actual value
+#   setPINx <val>
+#       With x as the port or pin (A,B,C,D)
+#       The value to set the pin to (can be decimal or hexidecimal
+#       Example: setPINA 0x01
+#   printPORTx f OR printPINx f 
+#       With x as the port or pin (A,B,C,D)
+#       With f as a format option which can be: [d] decimal, [x] hexadecmial (default), [t] binary 
+#       Example: printPORTC d
+#   printDDRx
+#       With x as the DDR (A,B,C,D)
+#       Example: printDDRB
 
-	    while (1) {
-		temp_val = PINA;
-
-		while (temp_val != 0x00) {	// Inner while loop which checks bit 0 of temp_val and
-					       // Right shifts temp_val so that the next bit can be checked
-					      // Then it increments num_parked if bit 0 is 1.	
-			if ((temp_val & 0x01) == 0x01) {
-			   num_parked++;
-			}
-			temp_val = temp_val >> 1;
-		}
-		
-		
-		 if (num_parked == 1) { // Check the number of cars parked and assign cntavail!
-			cntavail = 0x03;
-		}
-		else if (num_parked == 2) {
-			cntavail = 0x02;
-		}
-		else if (num_parked == 3) {
-			cntavail = 0x01;
-		}
-		else if (num_parked == 4) {
-			cntavail = 0x00;
-		}
-		else {
-			cntavail = 0x04;
-		}
-
-		num_parked = 0x00; //Reset for the while loop
-		PORTC = cntavail;
+echo ======================================================\n
+echo Running all tests..."\n\n
 
 
-    }
-    return 1;
-}
+
+# Add tests below
+test "PINA: 0x00 => PORTC: 0x04"
+setPINA 0x00
+continue 5
+expectPORTC 0x04
+checkResult
+
+test "PINA: 0x01 => PORTC: 0x03"
+setPINA 0x01
+continue 5
+expectPORTC 0x03
+checkResult
+
+test "PINA: 0x0A => PORTC: 0x02"
+setPINA 0x0A
+continue 5
+expectPORTC 0x02
+checkResult
+
+
+test "PINA: 0x03 => PORTC: 0x02"
+setPINA 0x03
+continue 5
+expectPORTC 0x02
+checkResult
+
+test "PINA: 0x07 => PORTC: 0x01"
+setPINA 0x07
+continue 5
+expectPORTC 0x01
+checkResult
+
+test "PINA: 0x0B => PORTC: 0x01"
+setPINA 0x0B
+continue 5
+expectPORTC 0x01
+checkResult
+
+test "PINA: 0x0E => PORTC: 0x01"
+setPINA 0x0E
+continue 5
+expectPORTC 0x01
+checkResult
+
+test "PINA: 0x0F => PORTC: 0x00" 
+setPINA 0x0F
+continue 10
+expectPORTC 0x00
+checkResult
+
+
+
+
+
+# Report on how many tests passed/tests ran
+set $passed=$tests-$failed
+eval "shell echo Passed %d/%d tests.\n",$passed,$tests
+echo ======================================================\n
